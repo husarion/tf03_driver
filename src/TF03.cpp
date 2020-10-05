@@ -11,6 +11,7 @@ TF03::TF03(ros::NodeHandle nh)
     node_handle.param<std::string>("sensor_interface", sensor_interface, "serial");
 
     node_handle.param<bool>("print_version", print_version, false);
+    node_handle.param<std::string>("set_output_format", set_output_format, "");
     node_handle.param<int>("set_transmit_can_id", set_transmit_can_id, 0);
     node_handle.param<int>("set_receive_can_id", set_receive_can_id, 0);
     reconfigure_sensor = false;
@@ -35,6 +36,25 @@ TF03::TF03(ros::NodeHandle nh)
         ROS_INFO("New value for set_receive_can_id %#4x", set_receive_can_id);
         parameters.push_back(parameter_config{false, false, tf_03_command_id::receive_can_id, set_receive_can_id});
     }
+    if (set_output_format.compare("") != 0)
+    {
+        if (set_output_format.compare("serial"))
+        {
+            ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
+            reconfigure_sensor = true;
+            parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_SERIAL});
+        }
+        else if (set_output_format.compare("can"))
+        {
+            ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
+            reconfigure_sensor = true;
+            parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
+        }
+        else
+        {
+            ROS_ERROR("Invalid value for parameter set_output_format. Valid are serial, can.");
+        }
+    }
     if (sensor_interface.compare("serial") == 0)
     {
         interface = tf_03_interface::serial;
@@ -53,6 +73,7 @@ TF03::TF03(ros::NodeHandle nh)
     ROS_INFO("Initialize sensor");
     if (init_sensor(interface, (interface == tf_03_interface::serial) ? serial_port : can_device) != 0)
     {
+        ROS_ERROR("Can not init sensor!");
         return;
     }
 
@@ -130,17 +151,24 @@ void TF03::process_sensor_data()
             ROS_WARN("No data for %.2f s", (float)timeout_ms / 1000);
         }
         incoming_buffer.push_back(read_byte);
-        if (is_buffer_correct(incoming_buffer))
+        if (is_buffer_correct(&incoming_buffer))
         {
             if (incoming_buffer[0] == 0x59)
             {
-                process_incoming_buffer(std::vector<u_char>(&incoming_buffer[2], &incoming_buffer[7]));
+                process_incoming_buffer(std::vector<u_char>(&incoming_buffer[2], &incoming_buffer[8]));
             }
             else
             {
                 process_incoming_buffer(incoming_buffer);
             }
-            incoming_buffer.clear();
+            clear_incoming_buffer();
+        }
+        else
+        {
+            if (incoming_buffer.size() > 9)
+            {
+                ROS_ERROR("Buffer not correct and oversized, size=%ld", incoming_buffer.size());
+            }
         }
         break;
     case tf_03_interface::can:
@@ -166,14 +194,13 @@ void TF03::process_sensor_data()
     }
 }
 
-bool TF03::is_buffer_correct(std::vector<u_char> data)
+bool TF03::is_buffer_correct(std::vector<u_char> *data)
 {
-    // ROS_INFO("Bufer size: %ld", data.size());
-    if (data[0] == 0x59)
+    if (data->at(0) == 0x59)
     {
-        if (data.size() == 9 && data[1] == 0x59)
+        if (data->size() == 9 && data->at(1) == 0x59)
         {
-            if (verify_checksum(data))
+            if (verify_checksum(*data))
             {
                 return true;
             }
@@ -182,20 +209,20 @@ bool TF03::is_buffer_correct(std::vector<u_char> data)
             //     ROS_WARN("Checksum not correct");
             // }
         }
-        else if (data.size() > 9)
+        else if (data->size() > 9)
         {
             clear_incoming_buffer();
         }
     }
-    else if (data[0] == 0x5a)
+    else if (data->at(0) == 0x5a)
     {
-        if (data.size() >= 2)
+        if (data->size() >= 2)
         {
-            if (data.size() == data[1])
+            if (data->size() == data->at(1))
             {
                 return true;
             }
-            else if (data.size() > data[1])
+            else if (data->size() > data->at(1))
             {
                 clear_incoming_buffer();
             }
@@ -205,7 +232,7 @@ bool TF03::is_buffer_correct(std::vector<u_char> data)
     {
         // First byte is not equal to frame begin
         // need to remove it
-        data.erase(data.begin());
+        data->erase(data->begin());
     }
     return false;
 }
@@ -217,7 +244,7 @@ void TF03::clear_incoming_buffer()
 
 void TF03::process_incoming_buffer(std::vector<u_char> data)
 {
-    if (data.size() == 6 && data[2] == 0 && data[3] == 0 && data[4] == 0 && data[5] == 0)
+    if (data.size() == 6 && data[2] == 0 && data[3] == 0 && data[4] == 0 && data[5] == 0 && !reconfigure_sensor)
     {
         // Distance measurement found
         low_byte = data[0];  // DIST_LOW
@@ -271,8 +298,6 @@ void TF03::process_incoming_buffer(std::vector<u_char> data)
             {
                 ROS_WARN("Expected confirmation for %#2x, received %#2x instead", tf_03_command_id::output_format, parameters[0].command);
             }
-            // // Send save command
-            // send_command(interface, tf_03_command_id::save_settings);
         }
         else if (data[2] == tf_03_command_id::transmit_can_id)
         {
@@ -287,7 +312,6 @@ void TF03::process_incoming_buffer(std::vector<u_char> data)
             {
                 ROS_WARN("Expected confirmation for %#2x, received %#2x instead", tf_03_command_id::transmit_can_id, parameters[0].command);
             }
-            // send_command(interface, tf_03_command_id::save_settings);
         }
         else if (data[2] == tf_03_command_id::receive_can_id)
         {
@@ -302,7 +326,6 @@ void TF03::process_incoming_buffer(std::vector<u_char> data)
             {
                 ROS_WARN("Expected confirmation for %#2x, received %#2x instead", tf_03_command_id::receive_can_id, parameters[0].command);
             }
-            // send_command(interface, tf_03_command_id::save_settings);
         }
         else if (data[2] == tf_03_command_id::save_settings)
         {
@@ -455,7 +478,7 @@ void TF03::send_command(tf_03_interface i, tf_03_command_id command_id, int64_t 
         // CAN:     5A 05 45 02 A6
         command.push_back(tf_03_command_len.at(command_id));
         command.push_back(command_id);
-        command.push_back((i == tf_03_interface::serial) ? 0x01 : 0x02);
+        command.push_back(command_argument);
         command.push_back(get_checksum(command));
         write_command_data(i, command);
     case tf_03_command_id::transmit_can_id:

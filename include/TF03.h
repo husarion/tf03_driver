@@ -27,6 +27,9 @@
 #ifndef TF03_H
 #define TF03_H
 
+#define SET_OUTPUT_FORMAT_SERIAL 0x01
+#define SET_OUTPUT_FORMAT_CAN 0x02
+
 enum tf_03_interface
 {
     serial = 0,
@@ -65,7 +68,7 @@ private:
     void write_command_data(tf_03_interface i, std::vector<u_char> data);
     void clear_incoming_buffer();
     void process_incoming_buffer(std::vector<u_char> data);
-    bool is_buffer_correct(std::vector<u_char> data);
+    bool is_buffer_correct(std::vector<u_char> *data);
     bool verify_checksum(std::vector<u_char> data);
     u_char get_checksum(std::vector<u_char> data);
     void process_sensor_data();
@@ -89,6 +92,7 @@ private:
     struct can_frame *frame;
     int64_t can_socket;
     bool print_version;
+    std::string set_output_format;
     int set_transmit_can_id;
     int set_receive_can_id;
     bool reconfigure_sensor;
