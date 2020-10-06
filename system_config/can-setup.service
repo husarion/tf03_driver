@@ -1,0 +1,12 @@
+[Unit]
+Description=Enable CAN port for Panther robot
+After=syslog.target network.target multi-user.target nodm.service user@1000.service
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sleep 15
+ExecStart=/usr/bin/can_setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
