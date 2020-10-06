@@ -6,7 +6,8 @@ TF03::TF03(ros::NodeHandle nh)
     timeout_ms = 1000;
     node_handle.param<std::string>("serial_port", serial_port, "/dev/ttyUSB0");
     node_handle.param<std::string>("can_device", can_device, "panther_can");
-    node_handle.param<int>("can_transmit_id", can_transmit_id, 0x03); //HEX 0x03 = DEC 3
+    node_handle.getParam("can_transmit_id", can_transmit_id);
+    node_handle.getParam("sensor_frame", sensor_frame);
     node_handle.param<int>("can_receive_id", can_receive_id, 0x3003); //HEX 0x3003 = DEC 12291
     node_handle.param<std::string>("sensor_interface", sensor_interface, "serial");
 
@@ -24,14 +25,12 @@ TF03::TF03(ros::NodeHandle nh)
     }
     if (set_transmit_can_id != 0)
     {
-        ROS_INFO("Set new value for tf_03_command_id::transmit_can_id");
         reconfigure_sensor = true;
         ROS_INFO("New value for set_transmit_can_id %#4x", set_transmit_can_id);
         parameters.push_back(parameter_config{false, false, tf_03_command_id::transmit_can_id, set_transmit_can_id});
     }
     if (set_receive_can_id != 0)
     {
-        ROS_INFO("Set new value for tf_03_command_id::receive_can_id");
         reconfigure_sensor = true;
         ROS_INFO("New value for set_receive_can_id %#4x", set_receive_can_id);
         parameters.push_back(parameter_config{false, false, tf_03_command_id::receive_can_id, set_receive_can_id});
@@ -70,6 +69,21 @@ TF03::TF03(ros::NodeHandle nh)
         return;
     }
 
+    if (sensor_frame.size() == can_transmit_id.size())
+    {
+        for (int i = 0; i < sensor_frame.size(); i++)
+        {
+            sensors.insert(std::pair<int, std::string>(can_transmit_id[i], sensor_frame[i]));
+        }
+    }
+    else
+    {
+        for (auto id : can_transmit_id)
+        {
+            sensors.insert(std::pair<int, std::string>(id, "sensor_at_CAN_ID_" + std::to_string(id)));
+        }
+    }
+
     ROS_INFO("Initialize sensor");
     if (init_sensor(interface, (interface == tf_03_interface::serial) ? serial_port : can_device) != 0)
     {
@@ -106,6 +120,15 @@ TF03::TF03(ros::NodeHandle nh)
     }
     else
     {
+        for (auto s : sensors)
+        {
+            sensor_pub.insert(std::pair<int, ros::Publisher>(s.first, node_handle.advertise<sensor_msgs::Range>("sensor/" + s.second, 1)));
+            sensor_data.insert(std::pair<int, sensor_msgs::Range>(s.first, sensor_msgs::Range()));
+            sensor_data.at(s.first).header.frame_id = s.second;
+            sensor_data.at(s.first).field_of_view = 0.00872664626;
+            sensor_data.at(s.first).min_range = 0.1;
+            sensor_data.at(s.first).max_range = 180;
+        }
         ROS_INFO("Begin While loop");
         while (ros::ok())
         {
@@ -181,14 +204,17 @@ void TF03::process_sensor_data()
             d = 0;
         }
         int nbytes = read(can_socket, &publish_frame, sizeof(struct can_frame));
-        if (can_transmit_id == publish_frame.can_id)
+        for (auto id : can_transmit_id)
         {
-            incoming_buffer.clear();
-            for (int i = 0; i < publish_frame.can_dlc; i++)
+            if (id == publish_frame.can_id)
             {
-                incoming_buffer.push_back(publish_frame.data[i]);
+                incoming_buffer.clear();
+                for (int i = 0; i < publish_frame.can_dlc; i++)
+                {
+                    incoming_buffer.push_back(publish_frame.data[i]);
+                }
+                process_incoming_buffer(incoming_buffer, id);
             }
-            process_incoming_buffer(incoming_buffer);
         }
         break;
     }
@@ -242,7 +268,7 @@ void TF03::clear_incoming_buffer()
     incoming_buffer.clear();
 }
 
-void TF03::process_incoming_buffer(std::vector<u_char> data)
+void TF03::process_incoming_buffer(std::vector<u_char> data, int can_id)
 {
     if (data.size() == 6 && data[2] == 0 && data[3] == 0 && data[4] == 0 && data[5] == 0 && !reconfigure_sensor)
     {
@@ -251,7 +277,8 @@ void TF03::process_incoming_buffer(std::vector<u_char> data)
         high_byte = data[1]; // DIST_HIGH
         dist = high_byte * 256 + low_byte;
         dist_meters = (float)dist / 100;
-        // ROS_INFO("Dist is %.2f", dist_meters);
+        sensor_data.at(can_id).range = dist_meters;
+        sensor_pub.at(can_id).publish(sensor_data.at(can_id));
     }
     else if (verify_checksum(data))
     {

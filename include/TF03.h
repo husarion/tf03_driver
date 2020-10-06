@@ -9,6 +9,7 @@
 #include <linux/can/raw.h>
 
 #include "ros/ros.h"
+#include "sensor_msgs/Range.h"
 
 #ifdef LIBSERIAL_0_X
 #include <SerialPort.h>
@@ -67,17 +68,21 @@ private:
     void send_command(tf_03_interface i, tf_03_command_id command_id, int64_t command_argument = 0);
     void write_command_data(tf_03_interface i, std::vector<u_char> data);
     void clear_incoming_buffer();
-    void process_incoming_buffer(std::vector<u_char> data);
+    void process_incoming_buffer(std::vector<u_char> data, int can_id = 0);
     bool is_buffer_correct(std::vector<u_char> *data);
     bool verify_checksum(std::vector<u_char> data);
     u_char get_checksum(std::vector<u_char> data);
     void process_sensor_data();
     ros::NodeHandle node_handle;
+    std::map<int, ros::Publisher> sensor_pub;
+    std::map<int, sensor_msgs::Range> sensor_data;
     tf_03_interface interface;
     std::string sensor_interface;
     std::string can_device;
     int can_receive_id;
-    int can_transmit_id;
+    std::vector<int> can_transmit_id;
+    std::vector<std::string> sensor_frame;
+    std::map<int, std::string> sensors;
     std::string serial_port;
     std::string line;
     u_char read_byte;
