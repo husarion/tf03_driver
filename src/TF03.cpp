@@ -69,19 +69,23 @@ TF03::TF03(ros::NodeHandle nh)
         return;
     }
 
-    if (sensor_frame.size() == can_transmit_id.size())
+    if (sensor_frame.size() == can_transmit_id.size() && can_transmit_id.size() > 0)
     {
         for (int i = 0; i < sensor_frame.size(); i++)
         {
             sensors.insert(std::pair<int, std::string>(can_transmit_id[i], sensor_frame[i]));
         }
     }
-    else
+    else if (can_transmit_id.size() > 0)
     {
         for (auto id : can_transmit_id)
         {
             sensors.insert(std::pair<int, std::string>(id, "sensor_at_CAN_ID_" + std::to_string(id)));
         }
+    }
+    else
+    {
+        sensors.insert(std::pair<int, std::string>(0, "tf03_sensor"));
     }
 
     ROS_INFO("Initialize sensor");
