@@ -37,15 +37,15 @@ TF03::TF03(ros::NodeHandle nh)
     }
     if (set_output_format.compare("") != 0)
     {
-        if (set_output_format.compare("serial"))
+        if (set_output_format.compare("serial") == 0)
         {
             ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
             reconfigure_sensor = true;
             parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_SERIAL});
         }
-        else if (set_output_format.compare("can"))
+        else if (set_output_format.compare("can") == 0)
         {
-            ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
+            ROS_INFO("New value for set_output_format %s", set_output_format.c_str(), SET_OUTPUT_FORMAT_CAN);
             reconfigure_sensor = true;
             parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
         }
@@ -504,7 +504,7 @@ void TF03::send_command(tf_03_interface i, tf_03_command_id command_id, int64_t 
         write_command_data(i, command);
         break;
     case tf_03_command_id::output_format:
-        ROS_INFO("TF03::send_command:output format");
+        ROS_INFO("TF03::send_command: output format");
         // Serial:  5A 05 45 01 A5
         // CAN:     5A 05 45 02 A6
         command.push_back(tf_03_command_len.at(command_id));
@@ -512,6 +512,7 @@ void TF03::send_command(tf_03_interface i, tf_03_command_id command_id, int64_t 
         command.push_back(command_argument);
         command.push_back(get_checksum(command));
         write_command_data(i, command);
+        break;
     case tf_03_command_id::transmit_can_id:
     {
         ROS_INFO("TF03::send_command: transmit CAN ID");
