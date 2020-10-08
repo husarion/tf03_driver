@@ -39,3 +39,7 @@ Below parameters are used to reconfigure the sensor, they are used once, then ap
 - `set_receive_can_id`
 
    Set new CAN ID value used by sensor to receive data, default value `0`
+
+- `set_output_format`
+
+   Set interface to publish measurements and accept new configuration commands. Possible values are [`serial`, `can`], default is empty
