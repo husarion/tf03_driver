@@ -34,15 +34,14 @@ if prompt_sudo() != 0:
 
 if str(sys.argv[1]) == "uninstall":
     subprocess.call("rm /usr/sbin/can_setup.sh", shell=True)
-    subprocess.call("rm /usr/sbin/route_admin_panel.sh", shell=True)
+    subprocess.call("rm /usr/sbin/tf03_script.sh", shell=True)
     subprocess.call("rm /etc/ros/env.sh", shell=True)
     subprocess.call("rm /etc/systemd/system/tf03_can.service", shell=True)
     subprocess.call(
-        "rm /etc/systemd/system/route_admin_panel.service", shell=True)
+        "rm /etc/systemd/system/tf03_sensors.service", shell=True)
     subprocess.call("systemctl disable tf03_can.service", shell=True)
-    subprocess.call("systemctl disable panther_rap.service", shell=True)
+    subprocess.call("systemctl disable tf03_sensors.service", shell=True)
     sys.exit("All removed")
-
 
 HOSTNAME = str(sys.argv[1])
 ROS_IP = str(sys.argv[2])
