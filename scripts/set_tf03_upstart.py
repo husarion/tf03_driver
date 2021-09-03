@@ -30,7 +30,7 @@ def prompt_sudo():
 
 
 if prompt_sudo() != 0:
-    sys.exit("The user wasn't authenticated as a sudoer, exiting")
+    sys.exit("The user wasn't authenticated as a sudouser, exiting")
 
 if str(sys.argv[1]) == "uninstall":
     subprocess.call("rm /usr/sbin/can_setup.sh", shell=True)
@@ -48,11 +48,11 @@ ROS_IP = str(sys.argv[2])
 ROS_MASTER_URI = str(sys.argv[3])
 SENSOR_LAUNCH = str(sys.argv[4])
 
-launches = ["four_sensors", "single_sensor", "two_sensors"]
+launches = ["four_sensors", "single_sensor", "two_sensors", "four_sensors_rx_9"]
 if SENSOR_LAUNCH not in launches:
     sys.exit("""
 Wrong panther_type. Expected values:
-    "four_sensors", "single_sensor", "two_sensors"
+    "four_sensors", "single_sensor", "two_sensors", "four_sensors_rx_9"
     """)
 
 print("Configuration ->", "Hostname:", HOSTNAME, "ROS_IP:", ROS_IP,
