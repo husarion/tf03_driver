@@ -1,0 +1,14 @@
+<launch>
+
+    <group ns="tf03_driver">
+        <rosparam param="can_transmit_id"> [3,4,5,6]</rosparam>
+        <rosparam param="sensor_frame"> ["front_left", "front_right", "rear_left", "rear_right"]</rosparam>
+        
+        <rosparam param="sensor_interface">can</rosparam>
+        <rosparam param="can_device">benewake_can</rosparam>
+        <rosparam param="can_receive_id">9</rosparam>
+    </group>
+    <node pkg="tf03_driver" name="tf03_driver" type="tf03_node" output="screen" required="true">
+    </node>
+
+</launch>
