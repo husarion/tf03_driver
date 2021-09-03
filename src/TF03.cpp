@@ -274,14 +274,18 @@ void TF03::clear_incoming_buffer()
 
 void TF03::process_incoming_buffer(std::vector<u_char> data, int can_id)
 {
-    if (data.size() == 6 && data[2] == 0 && data[3] == 0 && data[4] == 0 && data[5] == 0 && !reconfigure_sensor)
+    if (data.size() == 6 && data[4] == 0 && data[5] == 0 && !reconfigure_sensor)
     {
         // Distance measurement found
-        low_byte = data[0];  // DIST_LOW
-        high_byte = data[1]; // DIST_HIGH
-        dist = high_byte * 256 + low_byte;
-        dist_meters = (float)dist / 100;
+        u_char dist_low_byte = data[0];  // DIST_LOW
+        u_char dist_high_byte = data[1]; // DIST_HIGH
+        u_int dist = dist_high_byte * 256 + dist_low_byte;
+        u_char strength_low_byte = data[2];  // STRENGTH_LOW
+        u_char strength_high_byte = data[3]; // STRENGTH_HIGH
+        u_int strength = strength_high_byte * 256 + strength_low_byte;
+        float dist_meters = (float)dist / 100;
         sensor_data.at(can_id).range = dist_meters;
+        //sensor_data.at(can_id).strength = strength;  // TODO: add "strength" to /tf03_driver/sensor/* ROS topics
         sensor_pub.at(can_id).publish(sensor_data.at(can_id));
     }
     else if (verify_checksum(data))
