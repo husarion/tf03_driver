@@ -7,4 +7,4 @@ services:
       dockerfile: ./Dockerfile
     network_mode: host
     restart: on-failure
-    command: roslaunch tf03_driver single_sensor.launch
+    command: roslaunch tf03_driver single_sensor_can.launch

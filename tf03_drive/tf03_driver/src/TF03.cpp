@@ -45,7 +45,7 @@ TF03::TF03(ros::NodeHandle nh)
         }
         else if (set_output_format.compare("can") == 0)
         {
-            ROS_INFO("New value for set_output_format %s", set_output_format.c_str(), SET_OUTPUT_FORMAT_CAN);
+            ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
             reconfigure_sensor = true;
             parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
         }
