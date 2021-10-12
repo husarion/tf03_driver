@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  tf03_driver:
+    build:
+      context: ../tf03_drive
+      dockerfile: ./Dockerfile
+    network_mode: host
+    restart: on-failure
+    command: roslaunch tf03_driver single_sensor.launch
