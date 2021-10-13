@@ -1,0 +1,20 @@
+<launch>
+    <group ns="tf03_driver">
+        <!-- Current parameters -->
+        <rosparam param="can_transmit_id"> [1]</rosparam>
+        <rosparam param="can_receive_id"> [17]</rosparam>
+        <rosparam param="sensor_frame"> ["front"]</rosparam>        
+        <rosparam param="can_device">benewake_can</rosparam>
+
+        <!-- Desired parameters -->
+        <!-- Make sure to set all parametres so you dont end up with default values -->>
+
+        <rosparam param="configure">true</rosparam>
+        <rosparam param="set_transmit_can_id"> [2]</rosparam>
+        <rosparam param="set_receive_can_id"> [18]</rosparam>
+        <rosparam param="set_output_format">can</rosparam>        
+        <rosparam param="print_version">false</rosparam>
+    </group>
+    <node pkg="tf03_driver" name="tf03_driver" type="tf03_CAN_node" output="screen" required="true">
+    </node>
+</launch>

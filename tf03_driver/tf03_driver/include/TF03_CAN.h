@@ -15,18 +15,19 @@
 #define SET_OUTPUT_FORMAT_CAN 0x02
 
 
-class TF03_CAN: private TF03_Base
+class TF03_CAN: public TF03_Base
 {
 public:
     TF03_CAN(ros::NodeHandle nh);
     virtual ~TF03_CAN();
 
+    void process_sensor_data() override;
+
 private:
     int init_sensor(std::string device_name) override;
     void send_command(tf_03_command_id command_id, int64_t command_argument = 0) override;
     void write_command_data(std::vector<u_char> data) override;
-    void process_sensor_data() override;
-
+    
     // Params
     std::string can_device;
     int can_receive_id;

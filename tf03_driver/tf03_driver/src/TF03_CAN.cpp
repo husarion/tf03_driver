@@ -2,10 +2,17 @@
 
 TF03_CAN::TF03_CAN(ros::NodeHandle nh): TF03_Base(nh)
 {
-    node_handle.param<std::string>("can_device", can_device, "panther_can");
-    node_handle.getParam("can_transmit_id", can_transmit_id);
-    node_handle.getParam("sensor_frame", sensor_frame);
-    node_handle.param<int>("can_receive_id", can_receive_id, 0x3003); //HEX 0x3003 = DEC 12291
+    int sum=0;
+    sum += node_handle.param<std::string>("can_device", can_device, "panther_can");
+    sum += node_handle.getParam("can_transmit_id", can_transmit_id);
+    sum += node_handle.getParam("sensor_frame", sensor_frame);
+    sum += node_handle.param<int>("can_receive_id", can_receive_id, 0x3003); //HEX 0x3003 = DEC 12291
+
+    int num_of_params = 4;
+    if (sum != num_of_params)
+    {
+        ROS_WARN("%d parameters loaded incorrectly", (num_of_params - sum));
+    }
 
     if (sensor_frame.size() == can_transmit_id.size() && can_transmit_id.size() > 0)
     {
@@ -41,11 +48,6 @@ TF03_CAN::TF03_CAN(ros::NodeHandle nh): TF03_Base(nh)
         sensor_data.at(s.first).field_of_view = 0.00872664626;
         sensor_data.at(s.first).min_range = 0.1;
         sensor_data.at(s.first).max_range = 180;
-    }
-    ROS_INFO("Begin While loop");
-    while (ros::ok())
-    {
-        process_sensor_data();
     }
 }
 

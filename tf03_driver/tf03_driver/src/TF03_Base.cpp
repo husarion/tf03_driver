@@ -1,10 +1,77 @@
 #include "TF03_Base.h"
 
+void TF03_Base::configureSensor()
+{
+    bool print_version;
+    std::string set_output_format;
+    int set_transmit_can_id;
+    int set_receive_can_id;
+    ros::Time command_timestamp;
+
+    int sum = 0;
+
+    sum += node_handle.param<bool>("print_version", print_version, false);
+    sum += node_handle.param<std::string>("set_output_format", set_output_format, "");
+    sum += node_handle.param<int>("set_transmit_can_id", set_transmit_can_id, 0);
+    sum += node_handle.param<int>("set_receive_can_id", set_receive_can_id, 0);
+
+    int num_of_params = 4;
+    if (sum != num_of_params)
+    {
+        ROS_ERROR("%d parameters loaded incorrectly", (num_of_params - sum));
+        return;
+    }
+
+    ROS_INFO("New value for set_transmit_can_id %#4x", set_transmit_can_id);
+    parameters.push_back(parameter_config{false, false, tf_03_command_id::transmit_can_id, set_transmit_can_id});
+
+    ROS_INFO("New value for set_receive_can_id %#4x", set_receive_can_id);
+    parameters.push_back(parameter_config{false, false, tf_03_command_id::receive_can_id, set_receive_can_id});
+
+    ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
+    if (set_output_format == "serial")
+    {
+        parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_SERIAL});
+    }
+    else if (set_output_format.compare("can") == 0)
+    {
+        parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
+    }
+    else
+    {
+        ROS_ERROR("Invalid value for parameter set_output_format. Valid are serial, can.");
+    }
+
+    parameters.push_back(parameter_config{false, false, tf_03_command_id::save_settings, 0});
+
+    ROS_INFO("Reconfiguring sensor");
+    while (parameters.size() > 0)
+    {
+        if (parameters[0].frame_sent == false)
+        {
+            send_command(parameters[0].command, parameters[0].argument);
+            command_timestamp = ros::Time::now();
+            parameters[0].frame_sent = true;
+        }
+        else if (command_timestamp + ros::Duration(2) < ros::Time::now())
+        {
+            ROS_ERROR("Timeout for command %#2x passed", parameters[0].command);
+            ROS_ERROR("Configuation failed");
+            return;
+        }
+        else if (parameters[0].command_success)
+        {
+            ROS_INFO("Command success");
+            parameters.erase(parameters.begin());
+        }
+        process_sensor_data();
+    }
+}
+
 void TF03_Base::clear_incoming_buffer()
 {
     incoming_buffer.clear();
 }
-
 
 void TF03_Base::process_incoming_buffer(std::vector<u_char> data, int can_id)
 {
