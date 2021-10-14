@@ -18,12 +18,6 @@ void TF03_Base::configureSensor()
         return;
     }
 
-    ROS_INFO("New value for set_transmit_can_id %#4x", set_transmit_can_id);
-    parameters.push_back(parameter_config{false, false, tf_03_command_id::transmit_can_id, set_transmit_can_id});
-
-    ROS_INFO("New value for set_receive_can_id %#4x", set_receive_can_id);
-    parameters.push_back(parameter_config{false, false, tf_03_command_id::receive_can_id, set_receive_can_id});
-
     ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
     if (set_output_format == "serial")
     {
@@ -38,9 +32,15 @@ void TF03_Base::configureSensor()
         int num_of_params = 2;
         if (sum != num_of_params)
         {
-            ROS_ERROR("%d parameters loaded incorrectly", (num_of_params - sum));
+            ROS_ERROR("Must provide set_transmit_can_id and set_receive_can_id!");
             return;
         }
+
+        ROS_INFO("New value for set_transmit_can_id %#4x", set_transmit_can_id);
+        parameters.push_back(parameter_config{false, false, tf_03_command_id::transmit_can_id, set_transmit_can_id});
+
+        ROS_INFO("New value for set_receive_can_id %#4x", set_receive_can_id);
+        parameters.push_back(parameter_config{false, false, tf_03_command_id::receive_can_id, set_receive_can_id});
 
         parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
     }
@@ -62,9 +62,11 @@ void TF03_Base::configureSensor()
         }
         else if (command_timestamp + ros::Duration(2) < ros::Time::now())
         {
-            ROS_ERROR("Timeout for command %#2x passed", parameters[0].command);
-            ROS_ERROR("Configuation failed");
-            return;
+            ROS_WARN("Timeout for command %#2x passed", parameters[0].command);
+            ROS_WARN("Sending again");
+
+            send_command(parameters[0].command, parameters[0].argument);
+            command_timestamp = ros::Time::now();
         }
         else if (parameters[0].command_success)
         {
@@ -73,6 +75,7 @@ void TF03_Base::configureSensor()
         }
         process_sensor_data();
     }
+    return;
 }
 
 void TF03_Base::clear_incoming_buffer()

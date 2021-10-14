@@ -6,8 +6,8 @@
         <!-- Desired parameters -->
         <!-- Make sure to set all parametres so you dont end up with default values -->>
         <rosparam param="configure">true</rosparam>
-        <rosparam param="set_transmit_can_id"> 2</rosparam>
-        <rosparam param="set_receive_can_id"> 18</rosparam>
+        <rosparam param="set_transmit_can_id"> 1</rosparam>
+        <rosparam param="set_receive_can_id"> 17</rosparam>
         <rosparam param="set_output_format">can</rosparam>        
         <rosparam param="print_version">false</rosparam>
     </group>

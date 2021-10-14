@@ -12,7 +12,7 @@ TF03_Serial::TF03_Serial(ros::NodeHandle nh): TF03_Base(nh)
         return;
     }
 
-    sensors.insert(std::pair<int, std::string>(0, "serial_sensor"));
+    sensors.insert(std::pair<int, std::string>(0, sensor_frame[0]));
 
     for (auto s : sensors)
     {
@@ -205,6 +205,7 @@ void TF03_Serial::send_command(tf_03_command_id command_id, int64_t command_argu
 
 void TF03_Serial::write_command_data(std::vector<u_char> data)
 {
+    ROS_INFO("SENDING DATA");
     tf03_serial_port->Write(data);
 }
 
