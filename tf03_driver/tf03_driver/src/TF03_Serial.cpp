@@ -12,6 +12,8 @@ TF03_Serial::TF03_Serial(ros::NodeHandle nh): TF03_Base(nh)
         return;
     }
 
+    sensors.insert(std::pair<int, std::string>(0, "serial_sensor"));
+
     for (auto s : sensors)
     {
         sensor_pub.insert(std::pair<int, ros::Publisher>(s.first, node_handle.advertise<sensor_msgs::Range>("sensor/" + s.second, 1)));
@@ -33,7 +35,6 @@ TF03_Serial::~TF03_Serial()
 
 void TF03_Serial::process_sensor_data()
 {
-    // ROS_INFO("Case serial");
     try
     {
         ReadByteFromSerial(tf03_serial_port, read_byte, timeout_ms);
