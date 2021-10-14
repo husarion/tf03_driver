@@ -27,21 +27,6 @@ install(DIRECTORY launch
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-## OLD NODE
-
-add_executable(tf03_node src/tf03_node.cpp src/TF03.cpp)
-
-target_link_libraries(tf03_node
-  ${catkin_LIBRARIES}
-  ${SERIAL_LDFLAGS}
-)
-
-install(TARGETS tf03_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-
 # TF03 CAN
 
 add_executable(tf03_CAN_node src/tf03_CAN_node.cpp src/TF03_CAN.cpp src/TF03_Base.cpp)
