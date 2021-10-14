@@ -3,7 +3,7 @@ version: '3.4'
 services:
   tf03_driver:
     build:
-      context: ../tf03_drive
+      context: ../tf03_driver
       dockerfile: ./Dockerfile
     network_mode: host
     restart: on-failure

@@ -401,13 +401,13 @@ int TF03::init_sensor(tf_03_interface i, std::string device_name)
 {
     if (i == tf_03_interface::serial)
     {
-        // ROS_INFO("Create serial port object");
+        ROS_INFO("Create serial port object");
 #ifdef LIBSERIAL_0_X
-        // ROS_INFO("Using LIBSERIAL_0_x");
+        ROS_INFO("Using LIBSERIAL_0_x");
         tf03_serial_port = new SerialPort(device_name);
         if (!tf03_serial_port->IsOpen())
         {
-            // ROS_INFO("Open serial port");
+            ROS_INFO("Open serial port");
             try
             {
                 tf03_serial_port->Open(
@@ -424,7 +424,7 @@ int TF03::init_sensor(tf_03_interface i, std::string device_name)
             }
         }
 #else
-        // ROS_INFO("Using LIBSERIAL_1_x");
+        ROS_INFO("Using LIBSERIAL_1_x");
         tf03_serial_port = new LibSerial::SerialPort(
             device_name,
             LibSerial::BaudRate::BAUD_115200,
@@ -434,7 +434,7 @@ int TF03::init_sensor(tf_03_interface i, std::string device_name)
             LibSerial::StopBits::STOP_BITS_1);
         if (!tf03_serial_port->IsOpen())
         {
-            // ROS_INFO("Open serial port");
+            ROS_INFO("Open serial port");
             try
             {
                 tf03_serial_port->Open(device_name);

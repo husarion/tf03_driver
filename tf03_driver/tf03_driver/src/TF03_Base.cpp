@@ -9,13 +9,9 @@ void TF03_Base::configureSensor()
     ros::Time command_timestamp;
 
     int sum = 0;
-
     sum += node_handle.param<bool>("print_version", print_version, false);
     sum += node_handle.param<std::string>("set_output_format", set_output_format, "");
-    sum += node_handle.param<int>("set_transmit_can_id", set_transmit_can_id, 0);
-    sum += node_handle.param<int>("set_receive_can_id", set_receive_can_id, 0);
-
-    int num_of_params = 4;
+    int num_of_params = 2;
     if (sum != num_of_params)
     {
         ROS_ERROR("%d parameters loaded incorrectly", (num_of_params - sum));
@@ -35,6 +31,17 @@ void TF03_Base::configureSensor()
     }
     else if (set_output_format.compare("can") == 0)
     {
+        int sum = 0;
+        sum += node_handle.param<int>("set_transmit_can_id", set_transmit_can_id, 0);
+        sum += node_handle.param<int>("set_receive_can_id", set_receive_can_id, 0);
+
+        int num_of_params = 2;
+        if (sum != num_of_params)
+        {
+            ROS_ERROR("%d parameters loaded incorrectly", (num_of_params - sum));
+            return;
+        }
+
         parameters.push_back(parameter_config{false, false, tf_03_command_id::output_format, SET_OUTPUT_FORMAT_CAN});
     }
     else

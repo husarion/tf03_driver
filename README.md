@@ -4,6 +4,19 @@ The tf03_driver provides ROS interface for **TF 03** range sensor produced by [B
 
 Node supports both serial and CAN interfaces. It also allows changing sensor configuration.
 
+## Quick launch
+
+**You must know your sensor can id! If not, proceede to configuration (TODO)**
+```
+cd repo-path/examples/
+sudo ./can_setup.sh
+docker-compose up --build
+```
+### SERIAL
+
+ls -la /dev/ttyUSB0
+sudo chmod 666 /dev/ttyUSB0
+
 ### Parameters
 
 - `sensor_interface`
