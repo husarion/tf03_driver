@@ -60,7 +60,9 @@ void TF03_Base::configureSensor()
             command_timestamp = ros::Time::now();
             parameters[0].frame_sent = true;
         }
-        else if (command_timestamp + ros::Duration(2) < ros::Time::now())
+        process_sensor_data();
+
+        if (command_timestamp + ros::Duration(2) < ros::Time::now())
         {
             ROS_WARN("Timeout for command %#2x passed", parameters[0].command);
             ROS_WARN("Sending again");
@@ -73,9 +75,20 @@ void TF03_Base::configureSensor()
             ROS_INFO("Command success");
             parameters.erase(parameters.begin());
         }
+    }
+
+    ROS_INFO("Configuration complete!");
+
+    ros::shutdown();
+}
+
+void TF03_Base::mainLoop()
+{
+    ROS_INFO("Begin Main loop");
+    while (ros::ok())
+    {
         process_sensor_data();
     }
-    return;
 }
 
 void TF03_Base::clear_incoming_buffer()

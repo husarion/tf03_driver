@@ -16,25 +16,13 @@ int main(int argc, char **argv)
 
     if (sensor_interface == "can")
     {
-        ROS_INFO("Init TF03 CAN object");
         TF03_CAN tf03(nh);
-
-        ROS_INFO("Begin While loop");
-        while (ros::ok())
-        {
-            tf03.process_sensor_data();
-        }
+        tf03.mainLoop();
     }
     else if (sensor_interface == "serial")
     {
-        ROS_INFO("Init TF03 Serial object");
         TF03_Serial tf03(nh);
-
-        ROS_INFO("Begin While loop");
-        while (ros::ok())
-        {
-            tf03.process_sensor_data();
-        }
+        tf03.mainLoop();
     }
     else
     {

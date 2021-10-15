@@ -9,7 +9,6 @@
 
         <!-- Desired parameters -->
         <!-- Make sure to set all parametres so you dont end up with default values -->>
-
         <rosparam param="set_output_format">serial</rosparam>        
         <rosparam param="print_version">false</rosparam>
     </group>

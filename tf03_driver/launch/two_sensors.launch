@@ -9,5 +9,4 @@
     </group>
     <node pkg="tf03_driver" name="tf03_driver" type="tf03_node" output="screen" required="true">
     </node>
-
 </launch>

@@ -57,7 +57,7 @@ public:
     std::vector<parameter_config> parameters;
     std::vector<u_char> incoming_buffer;
 
-    virtual void process_sensor_data() = 0;
+    void mainLoop();
 
     void clear_incoming_buffer();
     bool is_buffer_correct(std::vector<u_char> *data);
@@ -65,7 +65,8 @@ public:
 private:
     virtual int init_sensor(std::string device_name) = 0;
     virtual void send_command(tf_03_command_id command_id, int64_t command_argument = 0) = 0;
-    virtual void write_command_data(std::vector<u_char> data) = 0;\
+    virtual void write_command_data(std::vector<u_char> data) = 0;
+    virtual void process_sensor_data() = 0;
     bool verify_checksum(std::vector<u_char> data);
 };
 
