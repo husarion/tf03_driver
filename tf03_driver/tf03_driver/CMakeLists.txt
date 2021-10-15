@@ -29,14 +29,18 @@ install(DIRECTORY launch
 
 # TF03 CAN
 
-add_executable(tf03_CAN_node src/tf03_CAN_node.cpp src/TF03_CAN.cpp src/TF03_Base.cpp)
+add_executable(tf03_communication_node 
+  src/tf03_communication_node.cpp 
+  src/TF03_Serial.cpp
+  src/TF03_CAN.cpp 
+  src/TF03_Base.cpp)
 
-target_link_libraries(tf03_CAN_node
+target_link_libraries(tf03_communication_node
   ${catkin_LIBRARIES}
   ${SERIAL_LDFLAGS}
 )
 
-install(TARGETS tf03_CAN_node
+install(TARGETS tf03_communication_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
@@ -44,14 +48,18 @@ install(TARGETS tf03_CAN_node
 
 # TF03 Serial
 
-add_executable(tf03_Serial_node src/tf03_Serial_node.cpp src/TF03_Serial.cpp src/TF03_Base.cpp)
+add_executable(tf03_configuration_node 
+  src/tf03_configuration_node.cpp 
+  src/TF03_Serial.cpp 
+  src/TF03_CAN.cpp 
+  src/TF03_Base.cpp)
 
-target_link_libraries(tf03_Serial_node
+target_link_libraries(tf03_configuration_node
   ${catkin_LIBRARIES}
   ${SERIAL_LDFLAGS}
 )
 
-install(TARGETS tf03_Serial_node
+install(TARGETS tf03_configuration_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

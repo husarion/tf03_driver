@@ -10,10 +10,9 @@
         <!-- Desired parameters -->
         <!-- Make sure to set all parametres so you dont end up with default values -->>
 
-        <rosparam param="configure">true</rosparam>
         <rosparam param="set_output_format">serial</rosparam>        
         <rosparam param="print_version">false</rosparam>
     </group>
-    <node pkg="tf03_driver" name="tf03_driver" type="tf03_CAN_node" output="screen" required="true">
+    <node pkg="tf03_driver" name="tf03_driver" type="tf03_configuration_node" output="screen" required="true">
     </node>
 </launch>

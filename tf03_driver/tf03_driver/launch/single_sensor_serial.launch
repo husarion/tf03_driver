@@ -1,12 +1,11 @@
 <launch>
 
     <group ns="tf03_driver">
-        <rosparam param="configure">false</rosparam>
         <rosparam param="sensor_frame"> ["front"]</rosparam>
         <rosparam param="sensor_interface">serial</rosparam>
-        <!-- <rosparam param="serial_port">/dev/ttyUSB0</rosparam> -->
+        <rosparam param="serial_port">/dev/ttyUSB0</rosparam>
     </group>
-    <node pkg="tf03_driver" name="tf03_driver" type="tf03_Serial_node" output="screen" required="true">
+    <node pkg="tf03_driver" name="tf03_driver" type="tf03_communication_node" output="screen" required="true">
     </node>
 
 </launch>
