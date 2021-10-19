@@ -10,4 +10,3 @@ sudo slcand -o -f -s8 -F /dev/ttyACM0 benewake_can &
 sleep 5
 echo "ifconfig..."
 sudo ifconfig benewake_can up
-
