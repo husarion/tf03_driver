@@ -37,23 +37,10 @@ private:
     std::vector<std::string> sensor_frame;
     std::map<int, std::string> sensors;
     std::string serial_port;
-    std::string line;
+
     u_char read_byte;
     uint32_t timeout_ms;
-    u_char low_byte;
-    u_char high_byte;
-    u_char checksum;
-    u_char checksum_byte;
-    uint16_t dist;
-    float dist_meters;
-    struct can_frame *frame;
-    int64_t can_socket;
-    bool print_version;
-    std::string set_output_format;
-    int set_transmit_can_id;
-    int set_receive_can_id;
-    bool reconfigure_sensor;
-    ros::Time command_timestamp;
+    
 #ifdef LIBSERIAL_0_X
     SerialPort *tf03_serial_port;
 #else

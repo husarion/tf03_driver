@@ -54,6 +54,8 @@ public:
     std::map<int, ros::Publisher> sensor_pub;
     std::map<int, sensor_msgs::Range> sensor_data;
 
+    ros::Time command_timestamp;
+
     std::vector<parameter_config> parameters;
     std::vector<u_char> incoming_buffer;
 

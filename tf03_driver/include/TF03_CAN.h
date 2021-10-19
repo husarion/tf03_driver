@@ -37,8 +37,7 @@ private:
 
     struct can_frame *frame;
     int64_t can_socket;
-
-    ros::Time command_timestamp;
+  
     static std::map<tf_03_command_id, u_char> tf_03_command_len;
 };
 #endif
