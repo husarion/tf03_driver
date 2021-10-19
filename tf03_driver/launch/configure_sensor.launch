@@ -2,18 +2,22 @@
     <group ns="tf03_driver">
         <!-- Current parameters -->
         <!-- <rosparam param="sensor_interface">"$(env sensor_interface)"</rosparam> -->
-        <!-- <rosparam param="sensor_frame"> ["front"]</rosparam> 
-        <rosparam param="can_transmit_id"> [$(env can_transmit_id)]</rosparam>
-        <rosparam param="can_receive_id"> $(env can_receive_id)</rosparam>    
-        <rosparam param="can_device">benewake_can</rosparam>
-        <rosparam param="serial_port">$(env serial_port)</rosparam> -->
+        <rosparam subst_value="true"> 
+            sensor_interface: $(env sensor_interface)
+            sensor_frame: ['front']
+            can_transmit_id: $(env can_transmit_id)
+            can_receive_id: $(env can_receive_id)  
+            can_device: benewake_can
+            serial_port: $(env serial_port)
+        </rosparam> 
     </group>
+
     <node pkg="tf03_driver" name="tf03_driver" type="tf03_configuration_node" output="screen" required="true">
-        <param name="sensor_interface" value="$(env sensor_interface)" />
+        <!-- <param name="sensor_interface" value="$(env sensor_interface)" />
         <param name="sensor_frame" value="['front']" />
         <param name="can_transmit_id" value="$(env can_transmit_id)" />
         <param name="can_receive_id" value="$(env can_receive_id)" />   
         <param name="can_device" value="benewake_can" />
-        <param name="serial_port" value="$(env serial_port)" />
+        <param name="serial_port" value="$(env serial_port)" /> -->
     </node>
 </launch>

@@ -4,14 +4,34 @@ TF03_CAN::TF03_CAN(ros::NodeHandle nh): TF03_Base(nh)
 {
     int sum=0;
     sum += node_handle.param<std::string>("can_device", can_device, "panther_can");
-    sum += node_handle.getParam("can_transmit_id", can_transmit_id);
-    sum += node_handle.getParam("sensor_frame", sensor_frame);
-    sum += node_handle.param<int>("can_receive_id", can_receive_id, 0x3003); //HEX 0x3003 = DEC 12291
 
-    int num_of_params = 4;
+    int num_of_params = 1;
     if (sum != num_of_params)
     {
-        ROS_WARN("%d parameters loaded incorrectly", (num_of_params - sum));
+        ROS_WARN("j%d parameters loaded incorrectly", (num_of_params - sum));
+    }
+
+    sum=0;
+    sum += node_handle.getParam("can_transmit_id", can_transmit_id);
+
+    if (sum != num_of_params)
+    {
+        ROS_WARN("a%d parameters loaded incorrectly", (num_of_params - sum));
+    }
+    sum=0;
+    sum += node_handle.getParam("sensor_frame", sensor_frame);
+
+    if (sum != num_of_params)
+    {
+        ROS_WARN("j%d parameters loaded incorrectly", (num_of_params - sum));
+    }
+    sum=0;
+    sum += node_handle.param<int>("can_receive_id", can_receive_id, 0x11); //HEX 0x11 = DEC 17
+
+
+    if (sum != num_of_params)
+    {
+        ROS_WARN("b%d parameters loaded incorrectly", (num_of_params - sum));
     }
 
     if (sensor_frame.size() == can_transmit_id.size() && can_transmit_id.size() > 0)

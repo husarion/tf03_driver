@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  tf03_driver:
+    build:
+      context: ../../
+      dockerfile: ./Dockerfile
+    network_mode: host
+    restart: on-failure
+    environment:
+# Current sensor params
+      - sensor_interface=serial  # can or serial
+  # Serial only:
+      - serial_port=/dev/ttyUSB0
+  # CAN only:
+      - can_transmit_id=0
+      - can_receive_id=0
+# Desired sensor params
+      - set_output_format=can
+      - set_transmit_can_id=1
+      - set_receive_can_id=17
+    devices:
+      - "/dev/ttyUSB0"
+    tty: true
+    command: roslaunch tf03_driver configure_sensor.launch

@@ -1,22 +1,34 @@
 #include "TF03_Base.h"
 
+std::string get_env_var( std::string const & key ) {                                 
+    char * val;                                                                        
+    val = getenv( key.c_str() );                                                       
+    std::string retval = "";                                                           
+    if (val != NULL) {                                                                 
+        retval = val;  
+        ROS_INFO("Variable %s", val);                                                                  
+    }
+    else
+    {
+        ROS_ERROR("Variable %s not set correctly", val);
+    }                                                                                  
+    return retval;                                                                        
+}  
+
+int get_env_var_int(std::string const & key)
+{
+    return std::stoi(get_env_var(key));
+}
+
 void TF03_Base::configureSensor()
 {
-    bool print_version;
+    bool print_version = false;
     std::string set_output_format;
     int set_transmit_can_id;
     int set_receive_can_id;
     ros::Time command_timestamp;
 
-    int sum = 0;
-    sum += node_handle.param<bool>("print_version", print_version, false);
-    sum += node_handle.param<std::string>("set_output_format", set_output_format, "");
-    int num_of_params = 2;
-    if (sum != num_of_params)
-    {
-        ROS_ERROR("%d parameters loaded incorrectly", (num_of_params - sum));
-        return;
-    }
+    set_output_format = get_env_var("set_output_format");
 
     ROS_INFO("New value for set_output_format %s", set_output_format.c_str());
     if (set_output_format == "serial")
@@ -25,16 +37,8 @@ void TF03_Base::configureSensor()
     }
     else if (set_output_format.compare("can") == 0)
     {
-        int sum = 0;
-        sum += node_handle.param<int>("set_transmit_can_id", set_transmit_can_id, 0);
-        sum += node_handle.param<int>("set_receive_can_id", set_receive_can_id, 0);
-
-        int num_of_params = 2;
-        if (sum != num_of_params)
-        {
-            ROS_ERROR("Must provide set_transmit_can_id and set_receive_can_id!");
-            return;
-        }
+        set_transmit_can_id = get_env_var_int("set_transmit_can_id");
+        set_receive_can_id = get_env_var_int("set_receive_can_id");
 
         ROS_INFO("New value for set_transmit_can_id %#4x", set_transmit_can_id);
         parameters.push_back(parameter_config{false, false, tf_03_command_id::transmit_can_id, set_transmit_can_id});

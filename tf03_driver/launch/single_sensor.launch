@@ -1,0 +1,17 @@
+<launch>
+    <group ns="tf03_driver">
+        <!-- Current parameters -->
+        <!-- <rosparam param="sensor_interface">"$(env sensor_interface)"</rosparam> -->
+        <rosparam subst_value="true"> 
+            sensor_interface: can
+            sensor_frame: $(env sensor_frame)
+            can_transmit_id: $(env can_transmit_id)
+            can_receive_id: $(env can_receive_id)  
+            can_device: benewake_can
+            <!-- serial_port: $(env serial_port) -->
+        </rosparam> 
+    </group>
+
+    <node pkg="tf03_driver" name="tf03_driver" type="tf03_communication_node" output="screen" required="true">
+    </node>
+</launch>

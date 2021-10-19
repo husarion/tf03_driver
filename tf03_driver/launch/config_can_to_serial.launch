@@ -3,8 +3,8 @@
         <!-- Current parameters -->
         <rosparam param="sensor_interface">can</rosparam>
         <rosparam param="sensor_frame"> ["front"]</rosparam> 
-        <rosparam param="can_transmit_id"> [1]</rosparam>
-        <rosparam param="can_receive_id"> 17</rosparam>    
+        <rosparam param="can_transmit_id"> [2]</rosparam>
+        <rosparam param="can_receive_id"> 18</rosparam>    
         <rosparam param="can_device">benewake_can</rosparam>
 
         <!-- Desired parameters -->

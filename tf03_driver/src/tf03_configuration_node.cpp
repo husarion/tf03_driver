@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        ROS_ERROR("sensor_interface not a corecct value. Choose \"serial\" or \"can\"");
+        ROS_ERROR("sensor_interface not a corect value: %s. Choose \"serial\" or \"can\"", sensor_interface.c_str());
     }
 
     return 0;

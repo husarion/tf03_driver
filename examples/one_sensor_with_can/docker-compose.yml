@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  tf03_driver:
+    build:
+      context: ../../
+      dockerfile: ./Dockerfile
+    network_mode: host
+    restart: on-failure
+    tty: true
+    environment:
+      - sensor_frame=["front"]
+      - can_transmit_id=[1]
+      - can_receive_id=17
+    command: roslaunch tf03_driver single_sensor.launch
