@@ -1,7 +1,5 @@
 <launch>
     <group ns="tf03_driver">
-        <!-- Current parameters -->
-        <!-- <rosparam param="sensor_interface">"$(env sensor_interface)"</rosparam> -->
         <rosparam subst_value="true"> 
             sensor_interface: can
             sensor_frame: $(env sensor_frame)

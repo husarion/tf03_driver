@@ -30,7 +30,7 @@ install(DIRECTORY launch
 # TF03 CAN
 
 add_executable(tf03_communication_node 
-  src/tf03_communication_node.cpp 
+  src/main_tf03_communication_node.cpp 
   src/TF03_Serial.cpp
   src/TF03_CAN.cpp 
   src/TF03_Base.cpp)
@@ -49,7 +49,7 @@ install(TARGETS tf03_communication_node
 # TF03 Serial
 
 add_executable(tf03_configuration_node 
-  src/tf03_configuration_node.cpp 
+  src/main_tf03_configuration_node.cpp 
   src/TF03_Serial.cpp 
   src/TF03_CAN.cpp 
   src/TF03_Base.cpp)

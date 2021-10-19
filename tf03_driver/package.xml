@@ -3,7 +3,7 @@
   <name>tf03_driver</name>
   <version>0.0.1</version>
   <description>The tf03_driver provides ROS interface for tf_03 range sensor produced by Benewake.</description>
-  <maintainer email="lukasz.mitka@husarion.com">Łukasz Mitka</maintainer>
+  <maintainer email="nicolas.duc@husarion.com">Nicolas Duc</maintainer>
   <license>LGPLv3</license>
 
   <author email="lukasz.mitka@husarion.com">Łukasz Mitka</author>
