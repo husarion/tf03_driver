@@ -4,18 +4,39 @@ The tf03_driver provides ROS interface for **TF 03** range sensor produced by [B
 
 Node supports both serial and CAN interfaces. It also allows changing sensor configuration.
 
-## Quick launch
+## First setup (Sensor in factory settings)
 
-**You must know your sensor can id! If not, proceede to configuration (TODO)**
+First setup is done only when the sensor is configured to factory settings.
+In order to set up the sensors correctly youy need to connect only one to your device.
+
+Clonning repo:
 ```
-cd repo-path/examples/
-sudo ./can_setup.sh
+git clone https://github.com/husarion/tf03_driver.git
+```
+
+Nex go to first setup example. Default can_send is 1 and receive is 17.
+If you wish to modify it, you can do so in docker-compose.yml file.
+
+```
+cd tf03_driver/exmaples/first_setup
+```
+
+In order to run the setup simly execute in first setup directory:
+
+```
 docker-compose up --build
 ```
-### SERIAL
 
-ls -la /dev/ttyUSB0
-sudo chmod 666 /dev/ttyUSB0
+## Sensor communication with can
+
+**After first setup!**
+If you have changed can send or receive id meke sure to modify it in dokcer-compose
+```
+cd repo-path/examples/one_sensor_with_can
+rosrun tf03_driver can_setup.sh 
+docker-compose up --build
+```
+
 
 ### Parameters
 
