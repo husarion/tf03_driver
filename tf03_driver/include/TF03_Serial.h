@@ -31,7 +31,6 @@ public:
 
 private:
     int init_sensor(std::string device_name) override;
-    void send_command(tf_03_command_id command_id, int64_t command_argument = 0) override;
     void write_command_data(std::vector<u_char> data) override;
 
     std::vector<std::string> sensor_frame;
@@ -46,6 +45,5 @@ private:
 #else
     LibSerial::SerialPort *tf03_serial_port;
 #endif
-    static std::map<tf_03_command_id, u_char> tf_03_command_len;
 };
 #endif

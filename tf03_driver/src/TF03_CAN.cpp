@@ -133,89 +133,6 @@ int TF03_CAN::init_sensor(std::string device_name)
     return 0;
 }
 
-void TF03_CAN::send_command(tf_03_command_id command_id, int64_t command_argument)
-{
-    std::vector<u_char> command = {0x5a};
-    switch (command_id)
-    {
-    case tf_03_command_id::version:
-        ROS_INFO("TF03_CAN::send_command: version");
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-        break;
-    case tf_03_command_id::system_reset:
-        ROS_INFO("TF03_CAN::send_command: system_reset");
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-        break;
-    case tf_03_command_id::save_settings:
-        ROS_INFO("TF03_CAN::send_command:save settings");
-        // command: 5A 04 11 6F
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-        break;
-    case tf_03_command_id::output_format:
-        ROS_INFO("TF03_CAN::send_command: output format");
-        // Serial:  5A 05 45 01 A5
-        // CAN:     5A 05 45 02 A6
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        command.push_back(command_argument);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-        break;
-    case tf_03_command_id::transmit_can_id:
-    {
-        ROS_INFO("TF03_CAN::send_command: transmit CAN ID");
-        //          5A 08 50 H1 H2 H3 H4 SU
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        // ID=(H4 << 24)+(H3 << 16)+(H2 << 8)+H1
-        uint32_t transmit_id = command_argument;
-        u_char h1 = (transmit_id >> 0) & 0b00000000000000000000000011111111;
-        u_char h2 = (transmit_id >> 8) & 0b00000000000000000000000011111111;
-        u_char h3 = (transmit_id >> 16) & 0b00000000000000000000000011111111;
-        u_char h4 = (transmit_id >> 24) & 0b00000000000000000000000011111111;
-        command.push_back(h1);
-        command.push_back(h2);
-        command.push_back(h3);
-        command.push_back(h4);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-    }
-    break;
-    case tf_03_command_id::receive_can_id:
-    {
-        ROS_INFO("TF03_CAN::send_command: receive CAN ID");
-        command.push_back(tf_03_command_len.at(command_id));
-        command.push_back(command_id);
-        // ID=(H4 << 24)+(H3 << 16)+(H2 << 8)+H1
-        uint32_t transmit_id = command_argument;
-        u_char h1 = (transmit_id >> 0) & 0b00000000000000000000000011111111;
-        u_char h2 = (transmit_id >> 8) & 0b00000000000000000000000011111111;
-        u_char h3 = (transmit_id >> 16) & 0b00000000000000000000000011111111;
-        u_char h4 = (transmit_id >> 24) & 0b00000000000000000000000011111111;
-        command.push_back(h1);
-        command.push_back(h2);
-        command.push_back(h3);
-        command.push_back(h4);
-        command.push_back(get_checksum(command));
-        write_command_data(command);
-    }
-    break;
-    default:
-        ROS_ERROR("TF03_CAN::send_command: COMMAND NOT KNOWN");
-
-        break;
-    }
-}
-
 void TF03_CAN::write_command_data(std::vector<u_char> data)
 {
     frame->can_dlc = data.size();
@@ -227,12 +144,4 @@ void TF03_CAN::write_command_data(std::vector<u_char> data)
     // ROS_INFO("Sent %d bytes", nbytes);
 }
 
-std::map<tf_03_command_id, u_char> TF03_CAN::tf_03_command_len = {
-    {version, 4},
-    {system_reset, 4},
-    {framerate, 6},
-    {factory_settings, 4},
-    {save_settings, 4},
-    {output_format, 5},
-    {transmit_can_id, 0x08},
-    {receive_can_id, 0x08}};
+
