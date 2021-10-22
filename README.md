@@ -7,9 +7,9 @@ Node supports both serial and CAN interfaces. It also allows changing sensor con
 ## First setup (Sensor in factory settings)
 
 First setup is done only when the sensor is configured to factory settings.
-In order to set up the sensors correctly youy need to connect only one to your device.
+In order to set up the sensors correctly you need to connect only one to your device.
 
-Clonning repo:
+Cloning repo:
 ```
 git clone https://github.com/husarion/tf03_driver.git
 ```
@@ -18,10 +18,10 @@ Nex go to first setup example. Default can_send is 1 and receive is 17.
 If you wish to modify it, you can do so in docker-compose.yml file.
 
 ```
-cd tf03_driver/exmaples/first_setup
+cd tf03_driver/examples/first_setup
 ```
 
-In order to run the setup simly execute in first setup directory:
+In order to run the setup, execute in first setup directory:
 
 ```
 docker-compose up --build
@@ -30,13 +30,18 @@ docker-compose up --build
 ## Sensor communication with can
 
 **After first setup!**
-If you have changed can send or receive id meke sure to modify it in dokcer-compose
+If you have changed can send or receive id make sure to modify it in docker-compose
 ```
 cd repo-path/examples/one_sensor_with_can
-rosrun tf03_driver can_setup.sh 
+./can_setup.sh 
 docker-compose up --build
 ```
 
+to check if the data is received:
+
+```
+rostopic echo /tf03_driver/sensor/front
+```
 
 ### Parameters
 
@@ -86,4 +91,4 @@ Below parameters are used to reconfigure the sensor, they are used once, then ap
 ### Published topics
 
 Driver publishes sensor measurements on topic according to pattern: `/{node_name}/sensor/{sensor_frame}` with message type `sensor_msgs::Range`.
-Node will create as many publishers as sesors defined in parameters. In serial mode, frame name is set to `tf03_sensor`.
+Node will create as many publishers as sensors defined in parameters. In serial mode, frame name is set to `tf03_sensor`.
