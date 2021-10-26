@@ -29,6 +29,8 @@ docker-compose up --build
 
 ## Sensor communication with can
 
+**Important note:** You need to have can_utils package installed, instructions [here](#can-utils-instalation)
+
 **After first setup!**
 If you have changed can send or receive id make sure to modify it in docker-compose
 ```
@@ -92,3 +94,11 @@ Below parameters are used to reconfigure the sensor, they are used once, then ap
 
 Driver publishes sensor measurements on topic according to pattern: `/{node_name}/sensor/{sensor_frame}` with message type `sensor_msgs::Range`.
 Node will create as many publishers as sensors defined in parameters. In serial mode, frame name is set to `tf03_sensor`.
+
+## Can utils instalation
+
+Simply run
+
+```
+sudo apt-get install can-utils
+```
